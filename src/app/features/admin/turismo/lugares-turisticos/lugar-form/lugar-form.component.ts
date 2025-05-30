@@ -3,13 +3,91 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TurismoService, LugarTuristico } from '../../../../../core/services/turismo.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-lugar-form',
   standalone: true,
   imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-20px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-20px)' }))
+      ])
+    ])
+  ],
   template: `
     <div class="space-y-6">
+      <!-- Alertas de éxito (creación y edición) -->
+      @if (successMessage) {
+        <div @fadeInOut class="rounded-lg bg-green-50 p-4 border-l-4 border-green-500 shadow-lg relative" role="alert">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-green-800">{{ successMessage }}</p>
+            </div>
+            <div class="ml-auto pl-3">
+              <div class="-mx-1.5 -my-1.5">
+                <button
+                  type="button"
+                  (click)="successMessage = ''"
+                  class="inline-flex rounded-md p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  <span class="sr-only">Cerrar</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Barra de progreso animada -->
+          <div class="absolute bottom-0 left-0 h-1 bg-green-300 animate-pulse" style="width: 100%; animation: progress-bar 5s linear forwards;">
+          </div>
+        </div>
+      }
+
+      <!-- Alerta de edición exitosa -->
+      @if (editSuccessMessage) {
+        <div @fadeInOut class="rounded-lg bg-blue-50 p-4 border-l-4 border-blue-500 shadow-lg relative" role="alert">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-blue-800">{{ editSuccessMessage }}</p>
+            </div>
+            <div class="ml-auto pl-3">
+              <div class="-mx-1.5 -my-1.5">
+                <button
+                  type="button"
+                  (click)="editSuccessMessage = ''"
+                  class="inline-flex rounded-md p-1.5 text-blue-500 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <span class="sr-only">Cerrar</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Barra de progreso animada -->
+          <div class="absolute bottom-0 left-0 h-1 bg-blue-300 animate-pulse" style="width: 100%; animation: progress-bar 5s linear forwards;">
+          </div>
+        </div>
+      }
+
       <div class="sm:flex sm:items-center sm:justify-between">
         <h1 class="text-2xl font-bold text-gray-900">{{ isEditMode ? 'Editar Lugar Turístico' : 'Crear Lugar Turístico' }}</h1>
         <div class="mt-4 sm:mt-0">
@@ -164,6 +242,12 @@ import { TurismoService, LugarTuristico } from '../../../../../core/services/tur
       </div>
     </div>
   `,
+  styles: [`
+    @keyframes progress-bar {
+      0% { width: 100%; }
+      100% { width: 0%; }
+    }
+  `]
 })
 export class LugarFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -175,12 +259,16 @@ export class LugarFormComponent implements OnInit {
   lugarId: number | null = null;
   previewImage: string | null = null;
   selectedFile: File | null = null;
-  imageName: string = ''; // Nuevo campo para almacenar el nombre del archivo
+  imageName: string = '';
 
   loading = true;
   saving = false;
   submitted = false;
   error = '';
+  successMessage = '';
+  editSuccessMessage = '';
+  alertTimeout: any = null;
+  editAlertTimeout: any = null;
 
   get isEditMode(): boolean {
     return this.lugarId !== null;
@@ -195,6 +283,17 @@ export class LugarFormComponent implements OnInit {
       this.loadLugar(this.lugarId);
     } else {
       this.loading = false;
+    }
+
+    // Verificar si hay mensaje de éxito en los query params
+    const success = this.route.snapshot.queryParamMap.get('success');
+    if (success) {
+      // Determinar qué tipo de alerta mostrar según el contexto
+      if (success.includes('edit') || success.includes('actualiz')) {
+        this.showEditSuccessMessage(success);
+      } else {
+        this.showSuccessMessage(success);
+      }
     }
   }
 
@@ -324,9 +423,12 @@ export class LugarFormComponent implements OnInit {
       this.turismoService.updateLugarTuristico(this.lugarId, updateData).subscribe({
         next: () => {
           this.saving = false;
-          this.router.navigate(['/admin/lugares-turisticos'], {
-            queryParams: { success: 'Lugar turístico actualizado correctamente' }
-          });
+          // Mostrar alerta específica para edición
+          this.showEditSuccessMessage('Lugar turístico actualizado correctamente');
+          // Redirigir después de que se muestre la alerta
+          setTimeout(() => {
+            this.router.navigate(['/admin/lugares-turisticos']);
+          }, 3000);
         },
         error: (error) => {
           this.handleError(error);
@@ -338,9 +440,12 @@ export class LugarFormComponent implements OnInit {
       this.turismoService.createLugarTuristico(lugarData as Omit<LugarTuristico, 'id' | 'created_at' | 'updated_at'>).subscribe({
         next: () => {
           this.saving = false;
-          this.router.navigate(['/admin/lugares-turisticos'], {
-            queryParams: { success: 'Lugar turístico creado correctamente' }
-          });
+          // Mostrar alerta en lugar de redirigir inmediatamente
+          this.showSuccessMessage('¡Lugar turístico creado correctamente!');
+          // Redirigir después de que se muestre la alerta
+          setTimeout(() => {
+            this.router.navigate(['/admin/lugares-turisticos']);
+          }, 3000);
         },
         error: (error) => {
           this.handleError(error);
@@ -348,6 +453,36 @@ export class LugarFormComponent implements OnInit {
         }
       });
     }
+  }
+
+  showSuccessMessage(message: string) {
+    this.successMessage = message;
+    // Limpiar la otra alerta para evitar mostrar ambas a la vez
+    this.editSuccessMessage = '';
+
+    // Auto-cerrar la alerta después de 5 segundos
+    if (this.alertTimeout) {
+      clearTimeout(this.alertTimeout);
+    }
+
+    this.alertTimeout = setTimeout(() => {
+      this.successMessage = '';
+    }, 5000);
+  }
+
+  showEditSuccessMessage(message: string) {
+    this.editSuccessMessage = message;
+    // Limpiar la otra alerta para evitar mostrar ambas a la vez
+    this.successMessage = '';
+
+    // Auto-cerrar la alerta después de 5 segundos
+    if (this.editAlertTimeout) {
+      clearTimeout(this.editAlertTimeout);
+    }
+
+    this.editAlertTimeout = setTimeout(() => {
+      this.editSuccessMessage = '';
+    }, 5000);
   }
 
   private handleError(error: any) {

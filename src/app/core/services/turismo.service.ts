@@ -4,7 +4,6 @@ import {environment} from '../../../environments/environments';
 import {catchError, Observable, tap} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {User} from '../models/user.model';
-import * as string_decoder from 'node:string_decoder';
 
 export interface PaginatedResponse<T> {
   current_page: number;
@@ -122,6 +121,11 @@ export interface Emprendedor {
   idiomas_hablados?: string[];
   opciones_acceso?: string[];
   facilidades_discapacidad?: boolean;
+  estado?: boolean; // Añadido basado en el código React
+  servicios_count?: number; // Añadido basado en el código React
+  reservas_mes?: number; // Añadido basado en el código React
+  comunidad?: string; // Añadido para resolver el error
+  municipalidad?: string; // Añadido basado en el código React
   asociacion_id?: number;
   created_at?: string;
   updated_at?: string;
@@ -1074,6 +1078,9 @@ export class TurismoService {
     ).pipe(map(response => response.data));
   }
 
+  getAllEmprendedores() {
+
+  }
 }
 
 

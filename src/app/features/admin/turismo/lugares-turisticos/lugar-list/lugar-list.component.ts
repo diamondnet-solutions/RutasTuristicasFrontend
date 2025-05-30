@@ -105,7 +105,7 @@ import { ThemeService } from '../../../../../core/services/theme.service';
             <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary-400 dark:border-primary-600 border-r-transparent"></div>
             <span class="ml-4 text-gray-900 dark:text-gray-200">Cargando lugares turísticos...</span>
           </div>
-        } @else if ((lugares?.length ?? 0) === 0) {
+        } @else if (lugares.length === 0) {
           <div class="p-8 text-center">
             <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"></path>
@@ -216,6 +216,7 @@ import { ThemeService } from '../../../../../core/services/theme.service';
     </div>
   `,
 })
+
 export class LugarListComponent implements OnInit {
   private turismoService = inject(TurismoService);
   private themeService = inject(ThemeService);

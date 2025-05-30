@@ -2,6 +2,7 @@
 module.exports = {
   content: [
     "./src/**/*.{html,ts}", // <--- esto es CRUCIAL
+    "./projects/**/*.{html,ts}", // si tienes librerías o monorepo
   ],
   darkMode: 'class', // habilita dark mode por clases
   theme: {
