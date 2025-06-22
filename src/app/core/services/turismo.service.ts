@@ -1002,7 +1002,7 @@ export class TurismoService {
   getLugarTuristico(id: number): Observable<LugarTuristico> {
     return this.http.get<LugarTuristico>(
       `${this.API_URL}/lugares-turisticos/${id}`,
-      { headers: this.getSimpleHeaders() }
+      {headers: this.getSimpleHeaders()}
     ).pipe(
       tap(response => console.log('Respuesta del servidor:', response)), // Para depuración
       catchError(error => {
@@ -1078,9 +1078,41 @@ export class TurismoService {
     ).pipe(map(response => response.data));
   }
 
-  getAllEmprendedores() {
+  /**
+   * Genera un reporte PDF de emprendedores
+   * @param options Opciones para el reporte
+   * @returns Observable con el blob del PDF
+   */
+  generarReporteEmprendedoresPDF(options: {
+    incluir_estadisticas: boolean;
+    incluir_graficos: boolean;
+    orientacion: 'portrait' | 'landscape';
+  }): Observable<Blob> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/pdf'
+    });
 
+    return this.http.post(
+      `${this.API_URL}/reportes/emprendedores/pdf`,
+      {
+        formato: 'pdf',
+        incluir_estadisticas: options.incluir_estadisticas,
+        incluir_graficos: options.incluir_graficos,
+        orientacion: options.orientacion
+      },
+      {
+        headers: headers,
+        responseType: 'blob' // Importante para recibir el PDF
+      }
+    ).pipe(
+      catchError(error => {
+        console.error('Error al generar el reporte PDF:', error);
+        throw new Error('No se pudo generar el reporte PDF');
+      })
+    );
   }
+
 }
 
 
